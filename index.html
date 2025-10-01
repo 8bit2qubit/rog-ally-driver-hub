@@ -59,10 +59,10 @@
                     請選擇您的 ROG Ally 型號來取得最新的驅動程式。
                 </p>
             </div>
-            <div class="flex flex-col md:flex-row justify-center items-center gap-4 md:gap-6 pt-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 justify-center items-center gap-4 md:gap-6 pt-4">
                 <button id="rog-ally-2023-btn"
                     data-url="https://rog.asus.com/tw/gaming-handhelds/rog-ally/rog-ally-2023/helpdesk_download/"
-                    class="device-btn flex items-center justify-center w-full md:w-auto px-8 py-4 bg-gray-600 hover:bg-blue-700 text-white font-bold rounded-lg shadow-lg transition-transform transform hover:scale-105 duration-300 focus:outline-none focus:ring-4 focus:ring-red-500 focus:ring-opacity-50">
+                    class="device-btn flex items-center justify-center w-full px-8 py-4 bg-gray-600 hover:bg-blue-700 text-white font-bold rounded-lg shadow-lg transition-transform transform hover:scale-105 duration-300 focus:outline-none focus:ring-4 focus:ring-red-500 focus:ring-opacity-50">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-3" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round"
@@ -72,13 +72,33 @@
                 </button>
                 <button id="rog-ally-x-2024-btn"
                     data-url="https://rog.asus.com/tw/gaming-handhelds/rog-ally/rog-ally-x-2024/helpdesk_download/"
-                    class="device-btn flex items-center justify-center w-full md:w-auto px-8 py-4 bg-gray-600 hover:bg-blue-700 text-white font-bold rounded-lg shadow-lg transition-transform transform hover:scale-105 duration-300 focus:outline-none focus:ring-4 focus:ring-gray-500 focus:ring-opacity-50">
+                    class="device-btn flex items-center justify-center w-full px-8 py-4 bg-gray-600 hover:bg-blue-700 text-white font-bold rounded-lg shadow-lg transition-transform transform hover:scale-105 duration-300 focus:outline-none focus:ring-4 focus:ring-gray-500 focus:ring-opacity-50">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-3" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round"
                             d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
                     </svg>
                     ROG Ally X (2024)
+                </button>
+                <button id="rog-xbox-ally-2025-btn"
+                    data-url="https://rog.asus.com/tw/gaming-handhelds/rog-ally/rog-xbox-ally-2025/helpdesk_download/"
+                    class="device-btn flex items-center justify-center w-full px-8 py-4 bg-gray-600 hover:bg-blue-700 text-white font-bold rounded-lg shadow-lg transition-transform transform hover:scale-105 duration-300 focus:outline-none focus:ring-4 focus:ring-green-500 focus:ring-opacity-50">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-3" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                    </svg>
+                    ROG Xbox Ally (2025)
+                </button>
+                <button id="rog-xbox-ally-x-2025-btn"
+                    data-url="https://rog.asus.com/tw/gaming-handhelds/rog-ally/rog-xbox-ally-x-2025/helpdesk_download/"
+                    class="device-btn flex items-center justify-center w-full px-8 py-4 bg-gray-600 hover:bg-blue-700 text-white font-bold rounded-lg shadow-lg transition-transform transform hover:scale-105 duration-300 focus:outline-none focus:ring-4 focus:ring-green-500 focus:ring-opacity-50">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-3" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                    </svg>
+                    ROG Xbox Ally X (2025)
                 </button>
             </div>
         </div>
@@ -120,8 +140,7 @@
             const step2Container = document.getElementById("step2-container");
             const loadingContainer = document.getElementById("loading-container");
             const errorContainer = document.getElementById("error-container");
-            const rogAlly2023Btn = document.getElementById("rog-ally-2023-btn");
-            const rogAllyX2024Btn = document.getElementById("rog-ally-x-2024-btn");
+            const deviceButtons = document.querySelectorAll(".device-btn");
             const loadingText = document.getElementById("loading-text");
             const driverContainer = document.getElementById("driver-container");
             const modelTitle = document.getElementById("device-model");
@@ -129,17 +148,14 @@
             const backBtn = document.getElementById("back-btn");
 
             // --- Constants & State ---
-            const CORS_PROXY = 'https://corsproxy.io/?'; // 使用一個新的 CORS 代理
+            const CORS_PROXY = 'https://corsproxy.io/?';
             const ASUS_BASE_URL = "https://dlcdnets.asus.com";
             let driverData = null;
 
             // --- Event Listeners ---
-            rogAlly2023Btn.addEventListener("click", () =>
-                handleFetchAndAnalyze(rogAlly2023Btn.dataset.url)
-            );
-            rogAllyX2024Btn.addEventListener("click", () =>
-                handleFetchAndAnalyze(rogAllyX2024Btn.dataset.url)
-            );
+            deviceButtons.forEach(btn => {
+                btn.addEventListener("click", () => handleFetchAndAnalyze(btn.dataset.url));
+            });
             exportBtn.addEventListener("click", exportLatestDrivers);
             backBtn.addEventListener("click", () => showState("initial"));
 
@@ -149,16 +165,15 @@
                 step2Container.classList.add("hidden");
                 loadingContainer.classList.add("hidden");
                 errorContainer.classList.add("hidden");
-                rogAlly2023Btn.disabled = false;
-                rogAllyX2024Btn.disabled = false;
+                deviceButtons.forEach(btn => btn.disabled = false);
+
                 switch (state) {
                     case "initial":
                         step1Container.classList.remove("hidden");
                         break;
                     case "loading":
                         loadingContainer.classList.remove("hidden");
-                        rogAlly2023Btn.disabled = true;
-                        rogAllyX2024Btn.disabled = true;
+                        deviceButtons.forEach(btn => btn.disabled = true);
                         loadingText.textContent = message;
                         break;
                     case "results":
@@ -186,7 +201,7 @@
 
                     showState('loading', '步驟 2/3: 正在分析頁面並產生 API 網址...');
                     const apiUrl = parseHtmlForApiUrl(htmlContent);
-                    if (!apiUrl) return;
+                    if (!apiUrl) return; // Error is handled inside parseHtmlForApiUrl
 
                     showState('loading', '步驟 3/3: 正在從 API 擷取驅動程式資料...');
                     const driverResponse = await fetch(CORS_PROXY + apiUrl);
@@ -211,38 +226,37 @@
             function parseHtmlForApiUrl(htmlContent) {
                 const extractData = (regex, name) => {
                     const match = htmlContent.match(regex);
-                    if (match && match[1]) return match[1];
+                    if (match && match[1]) return match[1].trim();
                     console.error(`無法提取: ${name}`);
                     return null;
                 };
+
                 let errors = [];
                 const params = {};
+
+                // Extract required parameters
                 params.website = extractData(/websitePath:\s*['"]([^'"]+)['"]/, 'website');
                 if (!params.website) errors.push('website');
+
                 params.model = extractData(/og:url"\s*content="https?:\/\/rog\.asus\.com\/[^\/]+\/[^\/]+\/[^\/]+\/([^\/]+)\//, 'model');
                 if (!params.model) errors.push('model');
+
                 params.m1id = extractData(/data-bv-product-id="ROG_M1_(\d+)_P"/, 'm1id');
-                if (!params.m1id) errors.push('m1id');
-                params.cpu = extractData(/<h1.*?>.*? (RC\w+)<\/h1>/, 'cpu');
-                if (!params.cpu) errors.push('cpu');
-                if (params.m1id) {
-                    try {
-                        const levelTagIdRegex = new RegExp(params.m1id + ",(\\d+),");
-                        params.LevelTagId = extractData(levelTagIdRegex, 'LevelTagId');
-                    } catch (e) {
-                        console.error("提取 LevelTagId 時正則表達式錯誤", e);
-                        params.LevelTagId = null;
-                    }
-                } else {
-                    params.LevelTagId = null;
+                if (!params.m1id) {
+                    params.m1id = extractData(/"m1Id":(\d+),/, 'm1id (fallback)');
                 }
-                if (!params.LevelTagId) errors.push('LevelTagId');
+                if (!params.m1id) errors.push('m1id');
+
                 params.systemCode = extractData(/system:\s*['"]([^'"]+)['"]/, 'systemCode');
                 if (!params.systemCode) errors.push('systemCode');
+
                 if (errors.length > 0) {
-                    showState('error', `<strong>無法組合 API 網址。</strong><br>缺少以下參數：${errors.join(', ')}。<br>請確認您輸入的網址是有效的產品支援頁面。`);
+                    showState('error', `<strong>無法組合 API 網址。</strong><br>缺少以下必要參數：${errors.join(', ')}。`);
                     return null;
                 }
+
+                // Based on user's successful testing, cpu and LevelTagId can be empty.
+                // This makes the script much more robust against future site changes.
                 const baseUrl = "https://rog.asus.com/support/webapi/ProductV2/GetPDDrivers";
                 const queryParams = new URLSearchParams({
                     website: params.website,
@@ -250,14 +264,16 @@
                     pdid: '0',
                     m1id: params.m1id,
                     mode: '',
-                    cpu: params.cpu,
-                    osid: '52',
+                    cpu: '', // Set to empty as per finding
+                    osid: '52', // Windows 11
                     active: '',
-                    LevelTagId: params.LevelTagId,
+                    LevelTagId: '', // Set to empty as per finding
                     systemCode: params.systemCode,
                 });
+
                 return `${baseUrl}?${queryParams.toString()}`;
             }
+
 
             // --- Rendering Logic ---
             function renderDrivers(data) {

@@ -7,6 +7,14 @@
     <title>ROG Ally 系列驅動程式檢視器</title>
     <link href="./css/style.css" rel="stylesheet" />
     <style>
+        /* =================================
+           全域樣式 (Global Styles)
+           ================================= */
+
+        /*
+         * 設定全站字型，包含對 Emoji 的支援，
+         * 提供跨平台的良好閱讀體驗。
+         */
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
                 "Microsoft JhengHei", "PingFang TC", Roboto, "Helvetica Neue", Arial,
@@ -14,6 +22,11 @@
                 "Segoe UI Symbol", "Noto Color Emoji";
         }
 
+        /* =================================
+           動畫 (Animations)
+           ================================= */
+
+        /* 讀取中指示器的旋轉動畫 */
         .loader {
             border: 4px solid #f3f3f3;
             border-top: 4px solid #ef4444;
@@ -33,14 +46,22 @@
             }
         }
 
+        /* =================================
+           元件重設與樣式 (Component Resets & Styles)
+           ================================= */
+
+        /* 移除 <details> 標籤的預設箭頭圖示，以便自訂 */
         details>summary {
             list-style: none;
+            /* Firefox */
         }
 
         details>summary::-webkit-details-marker {
             display: none;
+            /* Chrome, Safari */
         }
 
+        /* 當 <details> 展開時，旋轉自訂的箭頭圖示 */
         details[open] summary .arrow {
             transform: rotate(90deg);
         }
@@ -48,7 +69,10 @@
 </head>
 
 <body class="bg-gray-900 text-gray-200 antialiased">
+    <!-- 主要內容容器 -->
     <div class="container mx-auto p-4 md:p-8 min-h-screen">
+
+        <!-- Step 1: 裝置選擇介面 -->
         <div id="step1-container"
             class="w-full max-w-4xl mx-auto bg-gray-800 rounded-2xl shadow-2xl p-6 md:p-8 space-y-6">
             <div class="text-center">
@@ -59,7 +83,9 @@
                     請選擇您的 ROG Ally 型號來取得最新的驅動程式。
                 </p>
             </div>
+            <!-- 裝置選擇按鈕網格 -->
             <div class="grid grid-cols-1 md:grid-cols-2 justify-center items-center gap-4 md:gap-6 pt-4">
+                <!-- data-url 屬性存放各裝置的官方支援頁面網址 -->
                 <button id="rog-ally-2023-btn"
                     data-url="https://rog.asus.com/tw/gaming-handhelds/rog-ally/rog-ally-2023/helpdesk_download/"
                     class="device-btn flex items-center justify-center w-full px-8 py-4 bg-gray-600 hover:bg-blue-700 text-white font-bold rounded-lg shadow-lg transition-transform transform hover:scale-105 duration-300 focus:outline-none focus:ring-4 focus:ring-red-500 focus:ring-opacity-50">
@@ -103,14 +129,17 @@
             </div>
         </div>
 
+        <!-- 讀取狀態指示器 -->
         <div id="loading-container" class="hidden text-center py-10">
             <div class="loader mx-auto"></div>
             <p id="loading-text" class="text-gray-400 mt-4 text-lg">處理中...</p>
         </div>
 
+        <!-- 錯誤訊息顯示區塊 -->
         <div id="error-container"
             class="hidden max-w-4xl mx-auto mt-6 p-4 bg-red-900 border border-red-700 text-red-300 rounded-lg"></div>
 
+        <!-- Step 2: 驅動程式顯示介面 -->
         <div id="step2-container" class="hidden max-w-4xl mx-auto mt-6">
             <header class="mb-8 text-center">
                 <h1 id="device-model" class="text-3xl md:text-4xl font-bold text-white">
@@ -128,14 +157,19 @@
                     返回
                 </button>
             </div>
+
+            <!-- 驅動程式列表 (動態內容) -->
             <div id="driver-container" class="space-y-4">
             </div>
         </div>
     </div>
 
     <script>
+        // 確保 DOM 完全載入後再執行指令碼
         document.addEventListener("DOMContentLoaded", () => {
-            // --- DOM Elements ---
+            //======================================================================
+            // DOM 元素參考 (DOM Element References)
+            //======================================================================
             const step1Container = document.getElementById("step1-container");
             const step2Container = document.getElementById("step2-container");
             const loadingContainer = document.getElementById("loading-container");
@@ -147,24 +181,40 @@
             const exportBtn = document.getElementById("export-latest-btn");
             const backBtn = document.getElementById("back-btn");
 
-            // --- Constants & State ---
+            //======================================================================
+            // 常數與應用程式狀態 (Constants & Application State)
+            //======================================================================
             const CORS_PROXY = 'https://corsproxy.io/?';
             const ASUS_BASE_URL = "https://dlcdnets.asus.com";
-            let driverData = null;
+            let driverData = null; // 用於儲存從 API 取得的驅動程式資料
 
-            // --- Event Listeners ---
+            //======================================================================
+            // 事件監聽器 (Event Listeners)
+            //======================================================================
+            // 為每個裝置按鈕綁定點選事件，觸發資料抓取
             deviceButtons.forEach(btn => {
                 btn.addEventListener("click", () => handleFetchAndAnalyze(btn.dataset.url));
             });
+            // 匯出按鈕事件
             exportBtn.addEventListener("click", exportLatestDrivers);
+            // 返回按鈕事件，回到初始畫面
             backBtn.addEventListener("click", () => showState("initial"));
 
-            // --- State Management ---
+            //======================================================================
+            // UI 狀態管理 (UI State Management)
+            //======================================================================
+            /**
+             * 控制應用程式的介面顯示狀態。
+             * @param {'initial' | 'loading' | 'results' | 'error'} state - 要顯示的狀態。
+             * @param {string} [message=""] - 在 'loading' 或 'error' 狀態下要顯示的訊息。
+             */
             function showState(state, message = "") {
+                // 先隱藏所有主要容器
                 step1Container.classList.add("hidden");
                 step2Container.classList.add("hidden");
                 loadingContainer.classList.add("hidden");
                 errorContainer.classList.add("hidden");
+                // 重設按鈕為可用狀態
                 deviceButtons.forEach(btn => btn.disabled = false);
 
                 switch (state) {
@@ -173,41 +223,51 @@
                         break;
                     case "loading":
                         loadingContainer.classList.remove("hidden");
-                        deviceButtons.forEach(btn => btn.disabled = true);
+                        deviceButtons.forEach(btn => btn.disabled = true); // 讀取時禁用按鈕
                         loadingText.textContent = message;
                         break;
                     case "results":
                         step2Container.classList.remove("hidden");
                         break;
                     case "error":
-                        step1Container.classList.remove("hidden");
+                        step1Container.classList.remove("hidden"); // 錯誤時同時顯示步驟 1，方便重試
                         errorContainer.classList.remove("hidden");
                         errorContainer.innerHTML = message;
                         break;
                 }
             }
 
-            // --- Core Logic ---
+            //======================================================================
+            // 核心邏輯 (Core Logic)
+            //======================================================================
+            /**
+             * 處理從抓取到分析並顯示驅動程式的完整流程。
+             * @param {string} productUrl - 裝置的官方支援頁面網址。
+             */
             async function handleFetchAndAnalyze(productUrl) {
                 if (!productUrl) {
                     showState('error', '發生內部錯誤：找不到產品網址。');
                     return;
                 }
                 try {
+                    // 步驟 1: 抓取產品頁面的 HTML 原始碼
                     showState('loading', '步驟 1/3: 正在抓取產品頁面原始碼...');
                     const response = await fetch(CORS_PROXY + productUrl);
                     if (!response.ok) throw new Error(`無法抓取產品頁面，伺服器回應: ${response.status}`);
                     const htmlContent = await response.text();
 
+                    // 步驟 2: 從 HTML 中解析出 API 網址所需的參數
                     showState('loading', '步驟 2/3: 正在分析頁面並產生 API 網址...');
                     const apiUrl = parseHtmlForApiUrl(htmlContent);
-                    if (!apiUrl) return; // Error is handled inside parseHtmlForApiUrl
+                    if (!apiUrl) return; // 錯誤已在 parseHtmlForApiUrl 內部處理
 
+                    // 步驟 3: 使用組合好的 API 網址抓取驅動程式資料
                     showState('loading', '步驟 3/3: 正在從 API 擷取驅動程式資料...');
                     const driverResponse = await fetch(CORS_PROXY + apiUrl);
                     if (!driverResponse.ok) throw new Error(`無法從 ASUS API 取得驅動程式資料，伺服器回應: ${driverResponse.status}`);
-                    const driverJson = await driverResponse.json();
 
+                    // API 可能回傳 JSON 字串，需手動解析
+                    const driverJson = await driverResponse.json();
                     const actualData = typeof driverJson === 'string' ? JSON.parse(driverJson) : driverJson;
                     driverData = actualData.Result;
 
@@ -215,6 +275,7 @@
                         throw new Error("API 成功回應，但未包含任何有效的驅動程式資料。");
                     }
 
+                    // 渲染結果並切換到結果頁面
                     renderDrivers(driverData);
                     showState('results');
                 } catch (error) {
@@ -223,7 +284,13 @@
                 }
             }
 
+            /**
+             * 解析 HTML 內容以提取建構 API 網址所需的參數。
+             * @param {string} htmlContent - 產品頁面的 HTML 原始碼。
+             * @returns {string|null} 組合好的 API 網址，若失敗則返回 null。
+             */
             function parseHtmlForApiUrl(htmlContent) {
+                // 內部輔助函數，用於執行正則表達式並提取匹配項
                 const extractData = (regex, name) => {
                     const match = htmlContent.match(regex);
                     if (match && match[1]) return match[1].trim();
@@ -234,19 +301,22 @@
                 let errors = [];
                 const params = {};
 
-                // Extract required parameters
+                // 提取 website 參數 (e.g., 'tw')
                 params.website = extractData(/websitePath:\s*['"]([^'"]+)['"]/, 'website');
                 if (!params.website) errors.push('website');
 
+                // 提取 model 名稱 (e.g., 'rog-ally-2023')
                 params.model = extractData(/og:url"\s*content="https?:\/\/rog\.asus\.com\/[^\/]+\/[^\/]+\/[^\/]+\/([^\/]+)\//, 'model');
                 if (!params.model) errors.push('model');
 
+                // 提取 m1id (產品 ID)，提供備用正則
                 params.m1id = extractData(/data-bv-product-id="ROG_M1_(\d+)_P"/, 'm1id');
                 if (!params.m1id) {
                     params.m1id = extractData(/"m1Id":(\d+),/, 'm1id (fallback)');
                 }
                 if (!params.m1id) errors.push('m1id');
 
+                // 提取 systemCode (e.g., 'rog')
                 params.systemCode = extractData(/system:\s*['"]([^'"]+)['"]/, 'systemCode');
                 if (!params.systemCode) errors.push('systemCode');
 
@@ -255,8 +325,7 @@
                     return null;
                 }
 
-                // Based on user's successful testing, cpu and LevelTagId can be empty.
-                // This makes the script much more robust against future site changes.
+                // 根據測試，cpu 和 LevelTagId 參數可以為空，這讓指令碼更具備彈性以應對網站未來變動。
                 const baseUrl = "https://rog.asus.com/support/webapi/ProductV2/GetPDDrivers";
                 const queryParams = new URLSearchParams({
                     website: params.website,
@@ -264,18 +333,23 @@
                     pdid: '0',
                     m1id: params.m1id,
                     mode: '',
-                    cpu: '', // Set to empty as per finding
+                    cpu: '', // 留空
                     osid: '52', // Windows 11
                     active: '',
-                    LevelTagId: '', // Set to empty as per finding
+                    LevelTagId: '', // 留空
                     systemCode: params.systemCode,
                 });
 
                 return `${baseUrl}?${queryParams.toString()}`;
             }
 
-
-            // --- Rendering Logic ---
+            //======================================================================
+            // 渲染邏輯 (Rendering Logic)
+            //======================================================================
+            /**
+             * 根據驅動程式資料，動態生成 HTML 並渲染到頁面上。
+             * @param {object} data - 從 API 取得的驅動程式資料 (driverData)。
+             */
             function renderDrivers(data) {
                 driverContainer.innerHTML = "";
                 if (data.Model) {
@@ -286,15 +360,20 @@
                         '<p class="text-center text-red-400">無法載入驅動程式資料。</p>';
                     return;
                 }
+
+                // 按分類名稱排序
                 data.Obj.sort((a, b) => a.Name.localeCompare(b.Name));
                 data.Obj.forEach((category) => {
                     const details = document.createElement("details");
                     details.className =
                         "bg-gray-800 rounded-lg shadow-md overflow-hidden transition";
 
+                    // 在每個分類內，按發佈日期由新到舊排序檔案
                     category.Files.sort(
                         (a, b) => new Date(b.ReleaseDate) - new Date(a.ReleaseDate)
                     );
+
+                    // 建立一個映射表，用於追蹤每個獨立驅動標題的最新版本 ID，以便加上"最新"標籤
                     const latestForTitles = {};
                     category.Files.forEach((file) => {
                         if (
@@ -305,13 +384,17 @@
                         }
                     });
 
+                    // 為每個檔案生成 HTML
                     let filesHtml = category.Files.map((file) => {
                         const downloadUrl = file.DownloadUrl.Global;
-                        if (!downloadUrl) return "";
+                        if (!downloadUrl) return ""; // 忽略沒有下載連結的檔案
 
+                        // 組合完整的下載 URL
                         const fullUrl = downloadUrl.startsWith("http")
                             ? downloadUrl
                             : ASUS_BASE_URL + downloadUrl;
+
+                        // 檢查是否為最新版本
                         const isLatest = latestForTitles[file.Title] === file.Id;
                         const latestBadge = isLatest
                             ? `<span class="ml-2 bg-green-600 text-white text-xs font-bold px-2.5 py-1 rounded-full animate-pulse">最新</span>`
@@ -338,6 +421,7 @@
                             </div>`;
                     }).join("");
 
+                    // 組合分類的完整 HTML (摺疊面板)
                     details.innerHTML = `
                         <summary class="p-5 cursor-pointer flex justify-between items-center">
                             <div class="flex items-center">
@@ -353,7 +437,12 @@
                 });
             }
 
-            // --- Export Logic ---
+            //======================================================================
+            // 匯出功能 (Export Logic)
+            //======================================================================
+            /**
+             * 匯出所有分類中最新版本的驅動程式下載連結為一個 .txt 檔案。
+             */
             function exportLatestDrivers() {
                 if (!driverData || !driverData.Obj) {
                     const tempAlert = document.createElement("div");
@@ -368,28 +457,38 @@
                 const allLatestDriverUrls = [];
                 driverData.Obj.forEach((category) => {
                     if (!category.Files || category.Files.length === 0) return;
+
+                    // 1. 按驅動程式標題分組，以便找出每個獨立驅動的最新版
                     const driversByTitle = {};
                     category.Files.forEach((file) => {
                         if (!file.DownloadUrl || !file.DownloadUrl.Global) return;
                         if (!driversByTitle[file.Title]) driversByTitle[file.Title] = [];
                         driversByTitle[file.Title].push(file);
                     });
+
+                    // 2. 在每個分組中找出最新版本
                     for (const title in driversByTitle) {
                         const fileGroup = driversByTitle[title];
                         if (fileGroup.length === 0) continue;
+
+                        // 排除佔位符版本
                         const versionedFiles = fileGroup.filter(
                             (f) => !f.Version.includes("latest version")
                         );
+
                         let latestFile = null;
                         if (versionedFiles.length > 0) {
+                            // 如果有帶版本號的檔案，則從中找出日期最新的
                             latestFile = versionedFiles.reduce((latest, current) =>
                                 new Date(current.ReleaseDate) > new Date(latest.ReleaseDate)
                                     ? current
                                     : latest
                             );
                         } else {
+                            // 否則，直接取分組中的第一個檔案
                             latestFile = fileGroup[0];
                         }
+
                         if (latestFile) {
                             const downloadUrl = latestFile.DownloadUrl.Global;
                             const fullUrl = downloadUrl.startsWith("http")

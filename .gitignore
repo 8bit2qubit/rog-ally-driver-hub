@@ -5,4 +5,4 @@ package-lock.json
 /node_modules
 
 # build output folder - We WANT to commit this for GitHub Pages
-# /dist
+/dist

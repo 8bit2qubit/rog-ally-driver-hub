@@ -1,0 +1,8 @@
+# .gitignore
+package-lock.json
+
+# Dependencies
+/node_modules
+
+# build output folder - We WANT to commit this for GitHub Pages
+# /dist

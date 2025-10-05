@@ -27,17 +27,6 @@
     "drivers": "驅動程式",
     "driversSubtitle": "視覺化檢視及匯出檔案連結。"
   },
-  "category": {
-    "biometric": "生物辨識驗證",
-    "sound": "音效驅動程式",
-    "software": "軟體程式",
-    "chipset": "晶片組",
-    "network": "網路驅動程式",
-    "bluetooth": "藍牙",
-    "reader": "讀卡機驅動程式",
-    "display": "顯示驅動程式",
-    "hotfix": "Hotfix"
-  },
   "buttons": {
     "exportLatest": "匯出所有分類的最新驅動網址",
     "back": "返回",

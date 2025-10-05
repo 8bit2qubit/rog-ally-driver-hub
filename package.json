@@ -3,12 +3,9 @@
   "version": "0.0.1",
   "description": "A streamlined driver viewer for the ASUS ROG Ally series.",
   "scripts": {
-    "build:css": "tailwindcss -i ./src/style.css -o ./dist/css/style.css --minify",
-    "copy:html": "copyfiles -u 1 ./src/*.html ./dist",
-    "build": "npm-run-all build:css copy:html",
-    "watch:css": "tailwindcss -i ./src/style.css -o ./dist/css/style.css --watch",
-    "watch:html": "chokidar \"./src/**/*.html\" -c \"npm run copy:html\"",
-    "dev": "npm-run-all --parallel watch:css watch:html"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
   },
   "repository": {
     "type": "git",
@@ -22,6 +19,7 @@
   },
   "homepage": "https://github.com/8bit2qubit/rog-ally-driver-hub#readme",
   "devDependencies": {
+    "vite": "^5.4.0",
     "autoprefixer": "^10.4.21",
     "chokidar-cli": "^3.0.0",
     "copyfiles": "^2.4.1",

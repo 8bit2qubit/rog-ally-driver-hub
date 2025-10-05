@@ -1,0 +1,71 @@
+{
+  "app": {
+    "title": "ROG Ally 系列驅動程式檢視器",
+    "subtitle": "請選擇您的 ROG Ally 型號來取得最新的驅動程式。",
+    "loading": "處理中...",
+    "steps": {
+      "step1": "步驟 1/3: 正在抓取產品頁面原始碼...",
+      "step2": "步驟 2/3: 正在分析頁面並產生 API 網址...",
+      "step3": "步驟 3/3: 正在從 API 擷取驅動程式資料..."
+    },
+    "errors": {
+      "noProductUrl": "發生內部錯誤：找不到產品網址。",
+      "fetchPageFailed": "無法抓取產品頁面，伺服器回應: {status}",
+      "fetchApiFailed": "無法從 ASUS API 取得驅動程式資料，伺服器回應: {status}",
+      "noData": "API 成功回應，但未包含任何有效的驅動程式資料。",
+      "composeApiMissing": "無法組合 API 網址。缺少以下必要參數：{fields}",
+      "generic": "發生錯誤：{msg}。請檢查網址是否正確，或稍後再試。有時代理伺服器可能會不穩定。"
+    }
+  },
+  "models": {
+    "a2023": "ROG Ally (2023)",
+    "x2024": "ROG Ally X (2024)",
+    "xb2025": "ROG Xbox Ally (2025)",
+    "xbx2025": "ROG Xbox Ally X (2025)"
+  },
+  "section": {
+    "drivers": "驅動程式",
+    "driversSubtitle": "視覺化檢視及匯出檔案連結。"
+  },
+  "category": {
+    "biometric": "生物辨識驗證",
+    "sound": "音效驅動程式",
+    "software": "軟體程式",
+    "chipset": "晶片組",
+    "network": "網路驅動程式",
+    "bluetooth": "藍牙",
+    "reader": "讀卡機驅動程式",
+    "display": "顯示驅動程式",
+    "hotfix": "Hotfix"
+  },
+  "buttons": {
+    "exportLatest": "匯出所有分類的最新驅動網址",
+    "back": "返回",
+    "download": "下載"
+  },
+  "labels": {
+    "version": "版本",
+    "releaseDate": "發佈日期",
+    "fileSize": "檔案大小",
+    "countFiles": "{count} 個檔案",
+    "latest": "最新"
+  },
+  "export": {
+    "notReady": "驅動程式資料尚未載入或格式不正確。",
+    "none": "找不到任何有效的驅動程式下載網址。"
+  },
+  "categories": {
+    "biometric": "生物辨識驗證",
+    "sound": "音效",
+    "chipset": "晶片組",
+    "bluetooth": "藍牙",
+    "touchpad": "觸控板",
+    "software": "軟體程式",
+    "network": "網路驅動程式",
+    "reader": "讀卡機驅動程式",
+    "display": "顯示驅動程式",
+    "hotfix": "Hotfix"
+  }
+}
+
+

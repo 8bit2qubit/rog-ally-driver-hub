@@ -105,7 +105,6 @@
             </div>
             <!-- 裝置選擇按鈕網格 -->
             <div class="grid grid-cols-1 md:grid-cols-2 justify-center items-center gap-4 md:gap-6 pt-4">
-                <!-- data-url 屬性存放各裝置的官方支援頁面網址 -->
                 <button id="rog-ally-2023-btn"
                     data-model="a2023"
                     class="device-btn flex items-center justify-center w-full px-8 py-4 bg-gray-600 hover:bg-blue-700 text-white font-bold rounded-lg shadow-lg transition-transform transform hover:scale-105 duration-300 focus:outline-none focus:ring-4 focus:ring-red-500 focus:ring-opacity-50">
@@ -205,8 +204,6 @@
             // 初始化 i18n
             try {
                 await I18n.init();
-                // 初始化完成後，設定按鈕的 URL
-                updateButtonUrls();
             } catch (e) {
                 console.error(e);
             }
@@ -241,8 +238,6 @@
             if (langSelect) {
                 langSelect.addEventListener('change', async (e) => {
                     await I18n.setLang(e.target.value);
-                    // 語言切換後，更新所有按鈕的 URL
-                    updateButtonUrls();
                 });
             }
 
@@ -307,18 +302,6 @@
                 return `https://rog.asus.com/tw/gaming-handhelds/rog-ally/${modelName}/helpdesk_download/`;
             }
 
-            /**
-             * 更新所有按鈕的 URL（語言切換時使用）
-             */
-            function updateButtonUrls() {
-                deviceButtons.forEach(btn => {
-                    const model = btn.dataset.model;
-                    if (model) {
-                        // 更新按鈕的 data-url 屬性（用於除錯和檢查）
-                        btn.dataset.url = generateProductUrl(model);
-                    }
-                });
-            }
             /**
              * 處理從抓取到分析並顯示驅動程式的完整流程。
              * @param {string} productUrl - 裝置的官方支援頁面網址。
@@ -444,7 +427,6 @@
 
                 // 按分類名稱排序
                 data.Obj.sort((a, b) => a.Name.localeCompare(b.Name));
-                console.log(data.Obj);
                 data.Obj.forEach((category) => {
                     const details = document.createElement("details");
                     details.className =

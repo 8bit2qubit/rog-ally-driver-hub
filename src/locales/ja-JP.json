@@ -1,0 +1,49 @@
+{
+    "app": {
+      "title": "ROG Allyシリーズ ドライバービューア",
+      "subtitle": "お使いのROG Allyのモデルを選択して、最新のドライバーを入手してください。",
+      "loading": "処理中...",
+      "steps": {
+        "step1": "ステップ 1/3: 製品ページのソースコードを取得しています...",
+        "step2": "ステップ 2/3: ページを分析し、API URLを生成しています...",
+        "step3": "ステップ 3/3: APIからドライバーデータを取得しています..."
+      },
+      "errors": {
+        "noProductUrl": "内部エラーが発生しました：製品URLが見つかりません。",
+        "fetchPageFailed": "製品ページを取得できませんでした。サーバーの応答: {status}",
+        "fetchApiFailed": "ASUS APIからドライバーデータを取得できませんでした。サーバーの応答: {status}",
+        "noData": "APIは正常に応答しましたが、有効なドライバーデータが含まれていません。",
+        "composeApiMissing": "API URLを構成できません。必要なパラメータが不足しています：{fields}",
+        "generic": "エラーが発生しました：{msg}。URLが正しいか確認するか、後でもう一度お試しください。プロキシサーバーが不安定な場合があります。"
+      }
+    },
+    "models": {
+      "a2023": "ROG Ally (2023)",
+      "x2024": "ROG Ally X (2024)",
+      "xb2025": "ROG Xbox Ally (2025)",
+      "xbx2025": "ROG Xbox Ally X (2025)"
+    },
+    "section": {
+      "drivers": "ドライバー",
+      "driversSubtitle": "ファイルリンクを視覚的に表示し、エクスポートします。"
+    },
+    "buttons": {
+      "exportLatest": "すべてのカテゴリの最新ドライバーURLをエクスポート",
+      "back": "戻る",
+      "download": "ダウンロード"
+    },
+    "labels": {
+      "version": "バージョン",
+      "releaseDate": "リリース日",
+      "fileSize": "ファイルサイズ",
+      "countFiles": "{count} 個のファイル",
+      "latest": "最新"
+    },
+    "export": {
+      "notReady": "ドライバーデータがまだ読み込まれていないか、形式が正しくありません。",
+      "none": "有効なドライバーのダウンロードURLが見つかりません。"
+    },
+    "api": {
+      "website": "jp"
+    }
+  }

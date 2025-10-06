@@ -4,8 +4,10 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ROG Ally 系列驅動程式檢視器</title>
-    <link href="./css/style.css" rel="stylesheet" />
+    <title data-i18n="app.title">ROG Ally 系列驅動程式檢視器</title>
+    <link rel="preload" as="style" href="/style.css" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/style.css"></noscript>
+    
     <style>
         /* =================================
            全域樣式 (Global Styles)
@@ -20,7 +22,19 @@
                 "Microsoft JhengHei", "PingFang TC", Roboto, "Helvetica Neue", Arial,
                 "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
                 "Segoe UI Symbol", "Noto Color Emoji";
+            /* 預先套用與 Tailwind 類似的背景與前景色，避免 FOUC */
+            background-color: #111827; /* 相當於 bg-gray-900 */
+            color: #e5e7eb; /* 相當於 text-gray-200 */
         }
+
+        /* Tailwind 的 .hidden 在 CSS 尚未載入前失效，先提供等效樣式避免閃爍 */
+        .hidden { display: none; }
+
+        /* no-FOUC：在 CSS 與初始化完成前，暫時隱藏主要容器，避免未套樣式畫面閃現 */
+        .no-fouc #step1-container,
+        .no-fouc #step2-container,
+        .no-fouc #loading-container,
+        .no-fouc #error-container { display: none !important; }
 
         /* =================================
            動畫 (Animations)
@@ -68,7 +82,7 @@
     </style>
 </head>
 
-<body class="bg-gray-900 text-gray-200 antialiased">
+<body class="no-fouc bg-gray-900 text-gray-200 antialiased">
     <!-- 主要內容容器 -->
     <div class="container mx-auto p-4 md:p-8 min-h-screen">
 
@@ -76,55 +90,61 @@
         <div id="step1-container"
             class="w-full max-w-4xl mx-auto bg-gray-800 rounded-2xl shadow-2xl p-6 md:p-8 space-y-6">
             <div class="text-center">
-                <h1 class="text-2xl md:text-3xl font-bold text-red-500">
+                <div class="flex justify-end mb-2">
+                    <select id="lang-select" class="bg-gray-700 text-gray-200 text-sm px-2 py-1 rounded">
+                        <option value="zh-TW">繁體中文</option>
+                        <option value="en-US">English</option>
+                        <option value="ja-JP">日本語</option>
+                    </select>
+                </div>
+                <h1 class="text-2xl md:text-3xl font-bold text-red-500" data-i18n="app.title">
                     ROG Ally 系列驅動程式檢視器
                 </h1>
-                <p class="text-gray-400 mt-2">
+                <p class="text-gray-400 mt-2" data-i18n="app.subtitle">
                     請選擇您的 ROG Ally 型號來取得最新的驅動程式。
                 </p>
             </div>
             <!-- 裝置選擇按鈕網格 -->
             <div class="grid grid-cols-1 md:grid-cols-2 justify-center items-center gap-4 md:gap-6 pt-4">
-                <!-- data-url 屬性存放各裝置的官方支援頁面網址 -->
                 <button id="rog-ally-2023-btn"
-                    data-url="https://rog.asus.com/tw/gaming-handhelds/rog-ally/rog-ally-2023/helpdesk_download/"
+                    data-model="a2023"
                     class="device-btn flex items-center justify-center w-full px-8 py-4 bg-gray-600 hover:bg-blue-700 text-white font-bold rounded-lg shadow-lg transition-transform transform hover:scale-105 duration-300 focus:outline-none focus:ring-4 focus:ring-red-500 focus:ring-opacity-50">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-3" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round"
                             d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
                     </svg>
-                    ROG Ally (2023)
+                    <span data-i18n="models.a2023">ROG Ally (2023)</span>
                 </button>
                 <button id="rog-ally-x-2024-btn"
-                    data-url="https://rog.asus.com/tw/gaming-handhelds/rog-ally/rog-ally-x-2024/helpdesk_download/"
+                    data-model="x2024"
                     class="device-btn flex items-center justify-center w-full px-8 py-4 bg-gray-600 hover:bg-blue-700 text-white font-bold rounded-lg shadow-lg transition-transform transform hover:scale-105 duration-300 focus:outline-none focus:ring-4 focus:ring-gray-500 focus:ring-opacity-50">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-3" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round"
                             d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
                     </svg>
-                    ROG Ally X (2024)
+                    <span data-i18n="models.x2024">ROG Ally X (2024)</span>
                 </button>
                 <button id="rog-xbox-ally-2025-btn"
-                    data-url="https://rog.asus.com/tw/gaming-handhelds/rog-ally/rog-xbox-ally-2025/helpdesk_download/"
+                    data-model="xb2025"
                     class="device-btn flex items-center justify-center w-full px-8 py-4 bg-gray-600 hover:bg-blue-700 text-white font-bold rounded-lg shadow-lg transition-transform transform hover:scale-105 duration-300 focus:outline-none focus:ring-4 focus:ring-green-500 focus:ring-opacity-50">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-3" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round"
                             d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
                     </svg>
-                    ROG Xbox Ally (2025)
+                    <span data-i18n="models.xb2025">ROG Xbox Ally (2025)</span>
                 </button>
                 <button id="rog-xbox-ally-x-2025-btn"
-                    data-url="https://rog.asus.com/tw/gaming-handhelds/rog-ally/rog-xbox-ally-x-2025/helpdesk_download/"
+                    data-model="xbx2025"
                     class="device-btn flex items-center justify-center w-full px-8 py-4 bg-gray-600 hover:bg-blue-700 text-white font-bold rounded-lg shadow-lg transition-transform transform hover:scale-105 duration-300 focus:outline-none focus:ring-4 focus:ring-green-500 focus:ring-opacity-50">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-3" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round"
                             d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
                     </svg>
-                    ROG Xbox Ally X (2025)
+                    <span data-i18n="models.xbx2025">ROG Xbox Ally X (2025)</span>
                 </button>
             </div>
         </div>
@@ -132,7 +152,7 @@
         <!-- 讀取狀態指示器 -->
         <div id="loading-container" class="hidden text-center py-10">
             <div class="loader mx-auto"></div>
-            <p id="loading-text" class="text-gray-400 mt-4 text-lg">處理中...</p>
+            <p id="loading-text" class="text-gray-400 mt-4 text-lg" data-i18n="app.loading">處理中...</p>
         </div>
 
         <!-- 錯誤訊息顯示區塊 -->
@@ -142,19 +162,19 @@
         <!-- Step 2: 驅動程式顯示介面 -->
         <div id="step2-container" class="hidden max-w-4xl mx-auto mt-6">
             <header class="mb-8 text-center">
-                <h1 id="device-model" class="text-3xl md:text-4xl font-bold text-white">
+                <h1 id="device-model" class="text-3xl md:text-4xl font-bold text-white" data-i18n="section.drivers">
                     驅動程式
                 </h1>
-                <p class="text-gray-400 mt-2">視覺化檢視及匯出檔案連結。</p>
+                <p class="text-gray-400 mt-2" data-i18n="section.driversSubtitle">視覺化檢視及匯出檔案連結。</p>
             </header>
             <div class="flex flex-col sm:flex-row justify-center items-center gap-4 mb-8">
                 <button id="export-latest-btn"
                     class="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50">
-                    匯出所有分類的最新驅動網址
+                    <span data-i18n="buttons.exportLatest">匯出所有分類的最新驅動網址</span>
                 </button>
                 <button id="back-btn"
                     class="w-full sm:w-auto bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-transform transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50">
-                    返回
+                    <span data-i18n="buttons.back">返回</span>
                 </button>
             </div>
 
@@ -166,7 +186,7 @@
 
     <script>
         // 確保 DOM 完全載入後再執行指令碼
-        document.addEventListener("DOMContentLoaded", () => {
+        document.addEventListener("DOMContentLoaded", async () => {
             //======================================================================
             // DOM 元素參考 (DOM Element References)
             //======================================================================
@@ -180,6 +200,14 @@
             const modelTitle = document.getElementById("device-model");
             const exportBtn = document.getElementById("export-latest-btn");
             const backBtn = document.getElementById("back-btn");
+            const langSelect = document.getElementById("lang-select");
+
+            // 初始化 i18n
+            try {
+                await I18n.init();
+            } catch (e) {
+                console.error(e);
+            }
 
             //======================================================================
             // 常數與應用程式狀態 (Constants & Application State)
@@ -188,13 +216,32 @@
             const ASUS_BASE_URL = "https://dlcdnets.asus.com";
             let driverData = null; // 用於儲存從 API 取得的驅動程式資料
 
+
             //======================================================================
             // 事件監聽器 (Event Listeners)
             //======================================================================
             // 為每個裝置按鈕綁定點選事件，觸發資料抓取
             deviceButtons.forEach(btn => {
-                btn.addEventListener("click", () => handleFetchAndAnalyze(btn.dataset.url));
+                btn.addEventListener("click", () => {
+                    const modelKey = btn.dataset.model;
+                    const modelMap = {
+                        'a2023': 'rog-ally-2023',
+                        'x2024': 'rog-ally-x-2024', 
+                        'xb2025': 'rog-xbox-ally-2025',
+                        'xbx2025': 'rog-xbox-ally-x-2025'
+                    };
+                    const model = modelMap[modelKey];
+                    const url = generateProductUrl(modelKey);
+                    handleFetchAndAnalyze(url, model);
+                });
             });
+            // 語言切換
+            if (langSelect) {
+                langSelect.addEventListener('change', async (e) => {
+                    await I18n.setLang(e.target.value);
+                });
+            }
+
             // 匯出按鈕事件
             exportBtn.addEventListener("click", exportLatestDrivers);
             // 返回按鈕事件，回到初始畫面
@@ -241,30 +288,47 @@
             // 核心邏輯 (Core Logic)
             //======================================================================
             /**
+             * 根據模型生成產品 URL（固定使用 tw 路徑）
+             * @param {string} model - 模型代碼 (a2023, x2024, xb2025, xbx2025)
+             * @returns {string} 完整的產品 URL
+             */
+            function generateProductUrl(model) {
+                const modelMap = {
+                    'a2023': 'rog-ally-2023',
+                    'x2024': 'rog-ally-x-2024', 
+                    'xb2025': 'rog-xbox-ally-2025',
+                    'xbx2025': 'rog-xbox-ally-x-2025'
+                };
+                const modelName = modelMap[model];
+                return `https://rog.asus.com/tw/gaming-handhelds/rog-ally/${modelName}/helpdesk_download/`;
+            }
+
+            /**
              * 處理從抓取到分析並顯示驅動程式的完整流程。
              * @param {string} productUrl - 裝置的官方支援頁面網址。
+             * @param {string} model - 模型名稱 (rog-ally-2023, rog-ally-x-2024, etc.)
              */
-            async function handleFetchAndAnalyze(productUrl) {
+            async function handleFetchAndAnalyze(productUrl, model) {
                 if (!productUrl) {
-                    showState('error', '發生內部錯誤：找不到產品網址。');
+                    showState('error', I18n.t('app.errors.noProductUrl'));
                     return;
                 }
                 try {
                     // 步驟 1: 抓取產品頁面的 HTML 原始碼
-                    showState('loading', '步驟 1/3: 正在抓取產品頁面原始碼...');
+                    showState('loading', I18n.t('app.steps.step1'));
                     const response = await fetch(CORS_PROXY + productUrl);
-                    if (!response.ok) throw new Error(`無法抓取產品頁面，伺服器回應: ${response.status}`);
+                    if (!response.ok) throw new Error(I18n.t('app.errors.fetchPageFailed', { status: response.status }));
                     const htmlContent = await response.text();
 
                     // 步驟 2: 從 HTML 中解析出 API 網址所需的參數
-                    showState('loading', '步驟 2/3: 正在分析頁面並產生 API 網址...');
-                    const apiUrl = parseHtmlForApiUrl(htmlContent);
+                    showState('loading', I18n.t('app.steps.step2'));
+                    const apiUrl = parseHtmlForApiUrl(htmlContent, model);
                     if (!apiUrl) return; // 錯誤已在 parseHtmlForApiUrl 內部處理
 
                     // 步驟 3: 使用組合好的 API 網址抓取驅動程式資料
-                    showState('loading', '步驟 3/3: 正在從 API 擷取驅動程式資料...');
+                    showState('loading', I18n.t('app.steps.step3'));
                     const driverResponse = await fetch(CORS_PROXY + apiUrl);
-                    if (!driverResponse.ok) throw new Error(`無法從 ASUS API 取得驅動程式資料，伺服器回應: ${driverResponse.status}`);
+                    if (!driverResponse.ok) throw new Error(I18n.t('app.errors.fetchApiFailed', { status: driverResponse.status }));
 
                     // API 可能回傳 JSON 字串，需手動解析
                     const driverJson = await driverResponse.json();
@@ -272,7 +336,7 @@
                     driverData = actualData.Result;
 
                     if (!driverData || !driverData.Obj || driverData.Obj.length === 0) {
-                        throw new Error("API 成功回應，但未包含任何有效的驅動程式資料。");
+                        throw new Error(I18n.t('app.errors.noData'));
                     }
 
                     // 渲染結果並切換到結果頁面
@@ -280,16 +344,17 @@
                     showState('results');
                 } catch (error) {
                     console.error('處理過程中發生錯誤:', error);
-                    showState('error', `發生錯誤：<br>${error.message}。<br><br>請檢查網址是否正確，或稍後再試。有時代理伺服器可能會不穩定。`);
+                    showState('error', I18n.t('app.errors.generic', { msg: error.message }));
                 }
             }
 
             /**
              * 解析 HTML 內容以提取建構 API 網址所需的參數。
              * @param {string} htmlContent - 產品頁面的 HTML 原始碼。
+             * @param {string} model - 模型名稱 (rog-ally-2023, rog-ally-x-2024, etc.)
              * @returns {string|null} 組合好的 API 網址，若失敗則返回 null。
              */
-            function parseHtmlForApiUrl(htmlContent) {
+            function parseHtmlForApiUrl(htmlContent, model) {
                 // 內部輔助函數，用於執行正則表達式並提取匹配項
                 const extractData = (regex, name) => {
                     const match = htmlContent.match(regex);
@@ -301,12 +366,12 @@
                 let errors = [];
                 const params = {};
 
-                // 提取 website 參數 (e.g., 'tw')
-                params.website = extractData(/websitePath:\s*['"]([^'"]+)['"]/, 'website');
+                // 使用 i18n 的 website 參數，而不是從 HTML 中提取
+                params.website = I18n.t('api.website');
                 if (!params.website) errors.push('website');
 
-                // 提取 model 名稱 (e.g., 'rog-ally-2023')
-                params.model = extractData(/og:url"\s*content="https?:\/\/rog\.asus\.com\/[^\/]+\/[^\/]+\/[^\/]+\/([^\/]+)\//, 'model');
+                // 直接使用傳入的 model 參數
+                params.model = model;
                 if (!params.model) errors.push('model');
 
                 // 提取 m1id (產品 ID)，提供備用正則
@@ -321,7 +386,7 @@
                 if (!params.systemCode) errors.push('systemCode');
 
                 if (errors.length > 0) {
-                    showState('error', `<strong>無法組合 API 網址。</strong><br>缺少以下必要參數：${errors.join(', ')}。`);
+                    showState('error', I18n.t('app.errors.composeApiMissing', { fields: errors.join(', ') }));
                     return null;
                 }
 
@@ -353,11 +418,11 @@
             function renderDrivers(data) {
                 driverContainer.innerHTML = "";
                 if (data.Model) {
-                    modelTitle.textContent = `${data.Model} - 驅動程式`;
+                    modelTitle.textContent = `${data.Model} - ${I18n.t('section.drivers')}`;
                 }
                 if (!data || !data.Obj) {
                     driverContainer.innerHTML =
-                        '<p class="text-center text-red-400">無法載入驅動程式資料。</p>';
+                        '<p class="text-center text-red-400">Failed to load drivers.</p>';
                     return;
                 }
 
@@ -397,7 +462,7 @@
                         // 檢查是否為最新版本
                         const isLatest = latestForTitles[file.Title] === file.Id;
                         const latestBadge = isLatest
-                            ? `<span class="ml-2 bg-green-600 text-white text-xs font-bold px-2.5 py-1 rounded-full animate-pulse">最新</span>`
+                            ? `<span class="ml-2 bg-green-600 text-white text-xs font-bold px-2.5 py-1 rounded-full animate-pulse">${I18n.t('labels.latest')}</span>`
                             : "";
                         const highlightClass = isLatest
                             ? "border-l-4 border-green-500 bg-gray-700/50"
@@ -409,24 +474,25 @@
                                     <div class="flex-1 mb-3 md:mb-0">
                                         <h4 class="font-semibold text-lg text-white flex items-center">${file.Title}${latestBadge}</h4>
                                         <div class="text-sm text-gray-400 mt-1">
-                                            <span>版本: <strong class="font-medium text-gray-300">${file.Version}</strong></span> |
-                                            <span>發佈日期: <strong class="font-medium text-gray-300">${file.ReleaseDate}</strong></span> |
-                                            <span>檔案大小: <strong class="font-medium text-gray-300">${file.FileSize}</strong></span>
+                                            <span>${I18n.t('labels.version')}: <strong class="font-medium text-gray-300">${file.Version}</strong></span> |
+                                            <span>${I18n.t('labels.releaseDate')}: <strong class="font-medium text-gray-300">${file.ReleaseDate}</strong></span> |
+                                            <span>${I18n.t('labels.fileSize')}: <strong class="font-medium text-gray-300">${file.FileSize}</strong></span>
                                         </div>
                                     </div>
                                     <a href="${fullUrl}" target="_blank" rel="noopener noreferrer" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md transition text-center whitespace-nowrap">
-                                        下載
+                                        ${I18n.t('buttons.download')}
                                     </a>
                                 </div>
                             </div>`;
                     }).join("");
 
                     // 組合分類的完整 HTML (摺疊面板)
+                    const displayCategory = category.Name;
                     details.innerHTML = `
                         <summary class="p-5 cursor-pointer flex justify-between items-center">
                             <div class="flex items-center">
-                                <span class="font-bold text-xl text-white">${category.Name}</span>
-                                <span class="ml-3 bg-gray-700 text-gray-300 text-xs font-semibold px-2.5 py-0.5 rounded-full">${category.Count} 個檔案</span>
+                                <span class="font-bold text-xl text-white">${displayCategory}</span>
+                                <span class="ml-3 bg-gray-700 text-gray-300 text-xs font-semibold px-2.5 py-0.5 rounded-full">${I18n.t('labels.countFiles', { count: category.Count })}</span>
                             </div>
                             <svg class="w-6 h-6 text-gray-400 arrow transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                         </summary>
@@ -446,7 +512,7 @@
             function exportLatestDrivers() {
                 if (!driverData || !driverData.Obj) {
                     const tempAlert = document.createElement("div");
-                    tempAlert.textContent = "驅動程式資料尚未載入或格式不正確。";
+                    tempAlert.textContent = I18n.t('export.notReady');
                     tempAlert.style.cssText =
                         "position:fixed;top:20px;left:50%;transform:translateX(-50%);background:red;color:white;padding:10px 20px;border-radius:8px;z-index:1000;";
                     document.body.appendChild(tempAlert);
@@ -501,7 +567,7 @@
 
                 if (allLatestDriverUrls.length === 0) {
                     const tempAlert = document.createElement("div");
-                    tempAlert.textContent = "找不到任何有效的驅動程式下載網址。";
+                    tempAlert.textContent = I18n.t('export.none');
                     tempAlert.style.cssText =
                         "position:fixed;top:20px;left:50%;transform:translateX(-50%);background:orange;color:white;padding:10px 20px;border-radius:8px;z-index:1000;";
                     document.body.appendChild(tempAlert);
@@ -525,8 +591,11 @@
                 document.body.removeChild(a);
                 URL.revokeObjectURL(url);
             }
+            // 初始化完成後移除 no-fouc，顯示內容（此時 CSS 已可用）
+            document.body.classList.remove('no-fouc');
         });
     </script>
+    <script type="module" src="/main.js"></script>
 </body>
 
 </html>

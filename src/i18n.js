@@ -7,7 +7,7 @@
 (function () {
     const DEFAULT_LANG = 'zh-TW';
     const STORAGE_KEY = 'app.lang';
-    const SUPPORTED = ['zh-TW', 'en-US'];
+    const SUPPORTED = ['zh-TW', 'en-US', 'ja-JP'];
 
     let currentLang = DEFAULT_LANG;
     let dict = {};

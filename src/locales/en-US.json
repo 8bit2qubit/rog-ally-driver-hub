@@ -43,17 +43,8 @@
     "notReady": "Driver data not loaded or invalid format.",
     "none": "No valid driver download URLs found."
   },
-  "categories": {
-    "biometric": "Biometric",
-    "sound": "Sound",
-    "software": "Software",
-    "chipset": "Chipset",
-    "network": "Network",
-    "bluetooth": "Bluetooth",
-    "reader": "Reader",
-    "display": "Display",
-    "hotfix": "Hotfix",
-    "touchpad": "Touchpad"
+  "api": {
+    "website": "global"
   }
 }
 

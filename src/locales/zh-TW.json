@@ -43,17 +43,8 @@
     "notReady": "驅動程式資料尚未載入或格式不正確。",
     "none": "找不到任何有效的驅動程式下載網址。"
   },
-  "categories": {
-    "biometric": "生物辨識驗證",
-    "sound": "音效",
-    "chipset": "晶片組",
-    "bluetooth": "藍牙",
-    "touchpad": "觸控板",
-    "software": "軟體程式",
-    "network": "網路驅動程式",
-    "reader": "讀卡機驅動程式",
-    "display": "顯示驅動程式",
-    "hotfix": "Hotfix"
+  "api": {
+    "website": "tw"
   }
 }
 

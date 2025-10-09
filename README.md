@@ -1,11 +1,11 @@
 # ROG Ally Driver Hub
 
 <p align="center">
-  <img src="logo.png" alt="ROG Ally Driver Hub" style="height: 150px; object-fit: contain; display: block; margin: 0 auto;">
+  <img src="logo.png" alt="ROG Ally Driver Hub Logo" style="height: 150px; object-fit: contain; display: block; margin: 0 auto;">
 </p>
 
 <p align="center">
-  <a href="#"><img src="https://img.shields.io/badge/Version-0.0.1-blue.svg" alt="Version"></a>
+  <a href="#"><img src="https://img.shields.io/badge/Version-0.0.2-blue.svg" alt="Version"></a>
   <a href="#"><img src="https://img.shields.io/badge/Tech-Vanilla%20JS-yellow.svg" alt="Technology"></a>
   <a href="#"><img src="https://img.shields.io/badge/UI-Tailwind%20CSS-blueviolet.svg" alt="UI Framework"></a>
 </p>
@@ -18,8 +18,9 @@ The ultimate driver hub for your ROG Ally. Say goodbye to navigating confusing s
 
 ## ✨ Features
 
+* **Multi-Language Support**: Full support for English (en-US) and Traditional Chinese (zh-TW), with automatic language detection based on your browser settings.
 * **Purely Client-Side**: Runs entirely in your browser. No server, no data collection.
-* **Real-Time Data**: Fetches the latest driver info for the **ROG Ally (2023)**, **ROG Ally X (2024)**, and other future models on demand.
+* **Real-Time Data**: Fetches the latest driver info for the **ROG Ally (2023)**, **ROG Ally X (2024)**, and other models directly from the official ASUS website on demand.
 * **Intelligent Grouping**: Drivers are neatly organized by their official categories (Graphics, Audio, etc.) for easy navigation.
 * **Automatic Highlighting**: The latest version of each driver is automatically highlighted and sorted to the top of its category.
 * **One-Click Export**: Generate and download a clean `.txt` file containing direct download links for the newest version of every driver with a single click.
@@ -56,19 +57,23 @@ To get this project running on your local machine, follow these steps.
     ```
 
 3.  **Run for Development**
-    This command starts a development server that watches for changes in your `src` directory (both CSS and HTML) and automatically rebuilds the necessary files in the `dist` folder.
+    This command starts a Vite development server with blazing-fast Hot Module Replacement (HMR). Any changes you make in the `src` directory will be instantly reflected in your browser.
     ```bash
     npm run dev
     ```
 
 4.  **Build for Production**
-    When you are ready to deploy, run this command to generate a one-time, optimized build. It minifies the CSS and copies the HTML to the `dist` folder.
+    When you are ready to deploy, run this command to generate a single, optimized `index.html` file in the `dist` folder. All JavaScript and CSS are inlined into the file, making it completely self-contained.
     ```bash
     npm run build
     ```
 
-5.  **Preview in Browser**
-    Open the `dist/index.html` file in your browser. For the best experience with auto-reloading during development, use a local server extension like **Live Server** for VS Code.
+5.  **Preview the Production Build**
+    This command starts a local server to preview the production-ready files from the `dist` folder.
+    ```bash
+    npm run preview
+    ```
+    Alternatively, since the build output is a single, self-contained HTML file, you can also open dist/index.html directly in your browser to preview it.
 
 ---
 
@@ -78,11 +83,9 @@ To get this project running on your local machine, follow these steps.
 * **Styling**: Tailwind CSS
 * **Build Tools**:
     * `npm` - Package Manager
+    * `vite` - Next-generation front-end tooling
     * `tailwindcss` - The core CSS framework and CLI
     * `postcss` & `autoprefixer` - For CSS processing and browser compatibility
-    * `chokidar-cli` - A robust file watcher for real-time updates
-    * `copyfiles` - For copying assets during the build process
-    * `npm-run-all` - To run multiple scripts concurrently or sequentially
 * **Deployment**: GitHub Pages
 
 ---

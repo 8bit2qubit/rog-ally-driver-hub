@@ -3,5 +3,8 @@
 # Dependencies
 /node_modules
 
-# build output folder - We WANT to commit this for GitHub Pages
+# Vite build output - We WANT to commit this for GitHub Pages
 /dist
+
+# Vite cache
+.vite

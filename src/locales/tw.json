@@ -16,7 +16,7 @@
   "error-no-driver-data": "API 成功回應，但未包含任何有效的驅動程式資料。",
   "error-generic": "發生錯誤：<br>{{message}}。<br><br>請檢查網址是否正確，或稍後再試。有時代理伺服器可能會不穩定。",
   "error-api-params": "<strong>無法組合 API 網址。</strong><br>缺少以下必要參數：{{params}}。",
-  "driver-load-fail": "無法載入驅動程式資料。",
+  "error-load-driver": "無法載入驅動程式資料。",
   "file-count": "{{count}} 個檔案",
   "version": "版本",
   "release-date": "發佈日期",

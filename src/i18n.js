@@ -3,17 +3,23 @@
 // -----------------------------------------------------------------------------
 import usTranslations from './locales/us.json';
 import twTranslations from './locales/tw.json';
+import jpTranslations from './locales/jp.json';
+import krTranslations from './locales/kr.json';
 
 // 支援的語言清單
 export const supportedLangs = {
     us: 'English',
-    tw: '繁體中文'
+    tw: '繁體中文',
+    jp: '日本語',
+    kr: '한국어'
 };
 
 // 在建置時就將所有翻譯載入記憶體
 const allTranslations = {
     us: usTranslations,
     tw: twTranslations,
+    jp: jpTranslations,
+    kr: krTranslations
 };
 
 let currentLang = 'us'; // 預設語言
@@ -45,7 +51,7 @@ export function t(key, replaces) {
 
 /**
  * 設定並套用指定的語言 (同步執行)。
- * @param {'us' | 'tw'} lang - 要設定的語言。
+ * @param {'us' | 'tw' | 'jp' | 'kr'} lang - 要設定的語言。
  */
 export function setLanguage(lang) {
     if (supportedLangs[lang]) {
@@ -87,6 +93,12 @@ export function getInitialLang() {
     }
     if (browserLang.startsWith("en")) {
         return "us";
+    }
+    if (browserLang.startsWith("ja")) {
+        return "jp";
+    }
+    if (browserLang.startsWith("ko")) {
+        return "kr";
     }
     // 當瀏覽器語言都不是中英文時，預設為 'us'
     return 'us';

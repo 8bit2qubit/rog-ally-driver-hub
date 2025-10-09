@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  <a href="#"><img src="https://img.shields.io/badge/Version-0.0.2-blue.svg" alt="Version"></a>
+  <a href="#"><img src="https://img.shields.io/badge/Version-0.0.3-blue.svg" alt="Version"></a>
   <a href="#"><img src="https://img.shields.io/badge/Tech-Vanilla%20JS-yellow.svg" alt="Technology"></a>
   <a href="#"><img src="https://img.shields.io/badge/UI-Tailwind%20CSS-blueviolet.svg" alt="UI Framework"></a>
 </p>
@@ -73,7 +73,7 @@ To get this project running on your local machine, follow these steps.
     ```bash
     npm run preview
     ```
-    Alternatively, since the build output is a single, self-contained HTML file, you can also open dist/index.html directly in your browser to preview it.
+    Alternatively, since the build output is a single, self-contained HTML file, you can also open `dist/index.html` directly in your browser to preview it.
 
 ---
 

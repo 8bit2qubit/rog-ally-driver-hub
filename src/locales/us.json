@@ -16,7 +16,7 @@
   "error-no-driver-data": "API responded successfully, but it does not contain any valid driver data.",
   "error-generic": "An error occurred:<br>{{message}}.<br><br>Please check if the URL is correct or try again later. The proxy server can sometimes be unstable.",
   "error-api-params": "<strong>Could not construct API URL.</strong><br>Missing required parameters: {{params}}.",
-  "driver-load-fail": "Could not load driver data.",
+  "error-load-driver": "Could not load driver data.",
   "file-count": "{{count}} Files",
   "version": "Version",
   "release-date": "Release Date",

@@ -71,21 +71,25 @@ function showState(state, message = "") {
  */
 async function handleFetchAndAnalyze(modelSlug) {
     if (!modelSlug) {
-        showState('error', t('error-no-product-url'));
+        showState('error', t('error-no-url'));
         return;
     }
 
-    const currentLanguage = getLang();
-    const productUrl = `https://rog.asus.com/${currentLanguage}/gaming-handhelds/rog-ally/${modelSlug}/helpdesk_download/`;
+    // 為了確保參數解析的穩定性，始終從英文 (us) 頁面抓取 HTML。
+    // 產品 ID (m1id) 等參數在所有語言頁面中都是相同的，但英文頁面的結構最穩定。
+    // const currentLanguage = getLang();
+    // const productUrl = `https://rog.asus.com/${currentLanguage}/gaming-handhelds/rog-ally/${modelSlug}/helpdesk_download/`;
+    const usProductUrl = `https://rog.asus.com/us/gaming-handhelds/rog-ally/${modelSlug}/helpdesk_download/`;
 
     try {
-        // 步驟 1: 抓取產品頁面的 HTML 原始碼
+        // 步驟 1: 抓取產品頁面的 HTML 原始碼 (使用穩定的英文頁面)
         showState('loading', t('loading-step1'));
-        const response = await fetch(CORS_PROXY + productUrl);
-        if (!response.ok) throw new Error(t('error-fetch-product-page', { status: response.status }));
+        const response = await fetch(CORS_PROXY + usProductUrl);
+        if (!response.ok) throw new Error(t('error-fetch-page', { status: response.status }));
         const htmlContent = await response.text();
 
         // 步驟 2: 從 HTML 中解析出 API 網址所需的參數
+        // parseHtmlForApiUrl 內部會使用 getLang() 來確保 API 請求的是目前選擇語言的資料
         showState('loading', t('loading-step2'));
         const apiUrl = parseHtmlForApiUrl(htmlContent, modelSlug);
         if (!apiUrl) return; // 錯誤已在 parseHtmlForApiUrl 內部處理
@@ -143,7 +147,7 @@ function parseHtmlForApiUrl(htmlContent, modelSlug) {
     if (!params.systemCode) errors.push('systemCode');
 
     if (errors.length > 0) {
-        showState('error', t('error-missing-params', { params: errors.join(', ') }));
+        showState('error', t('error-api-params', { params: errors.join(', ') }));
         return null;
     }
 
@@ -254,7 +258,7 @@ function renderDrivers(data) {
 function exportLatestDrivers() {
     if (!driverData || !driverData.Obj) {
         // 簡易的 UI 提示
-        alert(t('alert-no-driver-data'));
+        alert(t('export-no-data'));
         return;
     }
 
@@ -291,7 +295,8 @@ function exportLatestDrivers() {
     });
 
     if (allLatestDriverUrls.length === 0) {
-        alert(t('alert-no-valid-urls'));
+        // 簡易的 UI 提示
+        alert(t('export-no-links'));
         return;
     }
 

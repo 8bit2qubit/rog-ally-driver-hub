@@ -3,6 +3,7 @@
   "lang-name": "繁體中文",
   "app-title": "ROG Ally 系列驅動程式中心",
   "app-subtitle": "請選擇您的 ROG Ally 型號來取得最新的驅動程式。",
+  "app-version": "版本 {{version}}",
   "loading-step1": "步驟 1/3: 正在抓取產品頁面原始碼...",
   "loading-step2": "步驟 2/3: 正在分析頁面並產生 API 網址...",
   "loading-step3": "步驟 3/3: 正在從 API 擷取驅動程式資料...",

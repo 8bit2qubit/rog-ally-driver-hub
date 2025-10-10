@@ -5,9 +5,9 @@
 </p>
 
 <p align="center">
-  <a href="#"><img src="https://img.shields.io/badge/Version-0.0.3-blue.svg" alt="Version"></a>
-  <a href="#"><img src="https://img.shields.io/badge/Tech-Vanilla%20JS-yellow.svg" alt="Technology"></a>
-  <a href="#"><img src="https://img.shields.io/badge/UI-Tailwind%20CSS-blueviolet.svg" alt="UI Framework"></a>
+  <a href="#"><img src="https://img.shields.io/github/v/tag/8bit2qubit/rog-ally-driver-hub?label=version" alt="Version"></a>
+  <a href="#"><img src="https://img.shields.io/badge/tech-Vanilla%20JS-yellow.svg" alt="Technology"></a>
+  <a href="#"><img src="https://img.shields.io/badge/ui-Tailwind%20CSS-blueviolet.svg" alt="UI Framework"></a>
 </p>
 
 The ultimate driver hub for your ROG Ally. Say goodbye to navigating confusing support pages. This powerful, browser-based tool gives you instant access to a clean, sorted, and exportable list of the latest official drivers for your device.
@@ -18,7 +18,7 @@ The ultimate driver hub for your ROG Ally. Say goodbye to navigating confusing s
 
 ## ✨ Features
 
-* **Multi-Language Support**: Full support for English (en-US) and Traditional Chinese (zh-TW), with automatic language detection based on your browser settings.
+* **Multi-Language Support**: The interface is available in multiple languages with automatic detection based on your browser's settings. You can also switch languages manually. Supported languages include: English, 繁體中文 (Traditional Chinese), 日本語 (Japanese), and 한국어 (Korean).
 * **Purely Client-Side**: Runs entirely in your browser. No server, no data collection.
 * **Real-Time Data**: Fetches the latest driver info for the **ROG Ally (2023)**, **ROG Ally X (2024)**, and other models directly from the official ASUS website on demand.
 * **Intelligent Grouping**: Drivers are neatly organized by their official categories (Graphics, Audio, etc.) for easy navigation.

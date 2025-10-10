@@ -3,6 +3,7 @@
   "lang-name": "한국어",
   "app-title": "ROG Ally 시리즈 드라이버 허브",
   "app-subtitle": "최신 드라이버를 받으려면 ROG Ally 모델을 선택하십시오.",
+  "app-version": "버전 {{version}}",
   "loading-step1": "1/3 단계: 제품 페이지 소스 가져오는 중...",
   "loading-step2": "2/3 단계: 페이지 분석 및 API URL 생성 중...",
   "loading-step3": "3/3 단계: API에서 드라이버 데이터 검색 중...",

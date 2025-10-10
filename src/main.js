@@ -17,6 +17,7 @@ const modelTitle = document.getElementById("device-model");
 const exportBtn = document.getElementById("export-latest-btn");
 const backBtn = document.getElementById("back-btn");
 const langSelect = document.getElementById("lang-select");
+const versionElement = document.getElementById("app-version");
 
 //======================================================================
 // 常數與應用程式狀態 (Constants & Application State)
@@ -319,6 +320,16 @@ function exportLatestDrivers() {
  * 初始化應用程式、語言設定和事件監聽。
  */
 function initializeApp() {
+    // 從 Vite 環境變數取得版本號
+    const appVersion = import.meta.env.APP_VERSION;
+
+    // 根據目前語言更新版本號文字的函式
+    const updateVersionText = () => {
+        if (versionElement && appVersion) {
+            versionElement.textContent = t('app-version', { version: appVersion });
+        }
+    };
+
     // 根據瀏覽器設定初始語言
     const initialLang = getInitialLang();
 
@@ -327,8 +338,9 @@ function initializeApp() {
         .map(([code, name]) => `<option value="${code}" ${code === initialLang ? 'selected' : ''}>${name}</option>`)
         .join('');
 
-    // 設定初始語言
+    // 設定初始語言並更新 UI
     setLanguage(initialLang);
+    updateVersionText();
 
     // 綁定事件
     deviceButtons.forEach(btn => {
@@ -342,6 +354,7 @@ function initializeApp() {
 
     langSelect.addEventListener('change', (e) => {
         setLanguage(e.target.value);
+        updateVersionText(); // 切換語言時也要更新版本號文字
     });
 }
 

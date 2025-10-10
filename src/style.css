@@ -2,3 +2,14 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  /*
+   * 為了相容性，保留這個 helper class。
+   * 移除 <details> 標籤在 Webkit 瀏覽器 (Chrome, Safari) 中的預設箭頭圖示。
+   * 其他樣式都已由 Tailwind utility classes 取代。
+  */
+  details > summary::-webkit-details-marker {
+    display: none;
+  }
+}

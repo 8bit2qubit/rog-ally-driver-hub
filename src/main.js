@@ -190,7 +190,7 @@ function renderDrivers(data) {
     data.Obj.sort((a, b) => a.Name.localeCompare(b.Name));
     data.Obj.forEach((category) => {
         const details = document.createElement("details");
-        details.className = "bg-gray-800 rounded-lg shadow-md overflow-hidden transition";
+        details.className = "group bg-gray-800 rounded-lg shadow-md overflow-hidden transition";
 
         // 在每個分類內，按發佈日期由新到舊排序檔案
         category.Files.sort((a, b) => new Date(b.ReleaseDate) - new Date(a.ReleaseDate));
@@ -235,12 +235,12 @@ function renderDrivers(data) {
 
         // 組合分類的完整 HTML (摺疊面板)
         details.innerHTML = `
-            <summary class="p-5 cursor-pointer flex justify-between items-center">
+            <summary class="p-5 cursor-pointer flex justify-between items-center list-none">
                 <div class="flex items-center">
                     <span class="font-bold text-xl text-white">${category.Name}</span>
                     <span class="ml-3 bg-gray-700 text-gray-300 text-xs font-semibold px-2.5 py-0.5 rounded-full">${t('file-count', { count: category.Count })}</span>
                 </div>
-                <svg class="w-6 h-6 text-gray-400 arrow transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                <svg class="w-6 h-6 text-gray-400 transition-transform group-open:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
             </summary>
             <div class="bg-gray-800/50">
                 ${filesHtml}

@@ -22,8 +22,13 @@ const versionElement = document.getElementById("app-version");
 //======================================================================
 // 常數與應用程式狀態 (Constants & Application State)
 //======================================================================
+// 使用 corsproxy.io 代理 ASUS API 請求 (繞過瀏覽器 CORS 限制)。
+// 註：免費公開 proxy 對大回應會回 413 (已實測：Xbox Ally (2025) 驅動清單 1.39MB 觸發 413)，
+//     且速度/穩定性不保證。故該機型暫時隱藏 (見 index.html)；
+//     長遠正解是改由 GitHub Actions 預抓成同源靜態 JSON (繞開 proxy 限制)。
 const CORS_PROXY = 'https://corsproxy.io/?';
 const ASUS_BASE_URL = "https://dlcdnets.asus.com";
+const SYSTEM_CODE = 'rog'; // ROG 產品線的固定識別碼，四款機型皆相同
 let driverData = null; // 用於儲存從 API 取得的驅動程式資料
 
 //======================================================================
@@ -67,7 +72,15 @@ function showState(state, message = "") {
 // 核心邏輯 (Core Logic)
 //======================================================================
 /**
- * 處理從抓取到分析並顯示驅動程式的完整流程。
+ * 處理從查詢產品資訊到顯示驅動程式的完整流程。
+ *
+ * 不再抓取產品頁 HTML 並用正則表達式刮取不穩定的參數，而是改為呼叫 ASUS 前端
+ * 自己使用的結構化 JSON API，動態組合出驅動程式 API 網址：
+ *   1. Route API   → 取得 m1Id、levelTagId、webPathName (正確大小寫的 model)
+ *   2. CPUName API → 取得 cpu (舊機型有值、新機型回空)
+ *   3. GetPDDrivers → 用上述參數抓取驅動程式清單
+ * 這讓流程不受頁面排版變動影響。
+ *
  * @param {string} modelSlug - 裝置的型號 slug (e.g., 'rog-ally-2023')。
  */
 async function handleFetchAndAnalyze(modelSlug) {
@@ -76,28 +89,20 @@ async function handleFetchAndAnalyze(modelSlug) {
         return;
     }
 
-    // 為了確保參數解析的穩定性，始終從英文 (us) 頁面抓取 HTML。
-    // 產品 ID (m1id) 等參數在所有語言頁面中都是相同的，但英文頁面的結構最穩定。
-    // const currentLanguage = getLang();
-    // const productUrl = `https://rog.asus.com/${currentLanguage}/gaming-handhelds/rog-ally/${modelSlug}/helpdesk_download/`;
-    const usProductUrl = `https://rog.asus.com/us/gaming-handhelds/rog-ally/${modelSlug}/helpdesk_download/`;
-
     try {
-        // 步驟 1: 抓取產品頁面的 HTML 原始碼 (使用穩定的英文頁面)
+        // 步驟 1: 查詢產品路由資訊，取得 m1Id / levelTagId / 正確的 model 名稱
         showState('loading', t('loading-step1'));
-        const response = await fetch(CORS_PROXY + usProductUrl);
-        if (!response.ok) throw new Error(t('error-fetch-page', { status: response.status }));
-        const htmlContent = await response.text();
+        const route = await fetchProductRoute(modelSlug);
+        if (!route) return; // 錯誤已在 fetchProductRoute 內部處理
 
-        // 步驟 2: 從 HTML 中解析出 API 網址所需的參數
-        // parseHtmlForApiUrl 內部會使用 getLang() 來確保 API 請求的是目前選擇語言的資料
+        // 步驟 2: 查詢 CPU 名稱 (舊機型需要、新機型回空字串)
         showState('loading', t('loading-step2'));
-        const apiUrl = parseHtmlForApiUrl(htmlContent, modelSlug);
-        if (!apiUrl) return; // 錯誤已在 parseHtmlForApiUrl 內部處理
+        const cpu = await fetchCpuName(route.model, route.m1id);
 
-        // 步驟 3: 使用組合好的 API 網址抓取驅動程式資料
+        // 步驟 3: 組合 API 網址並抓取驅動程式資料
         showState('loading', t('loading-step3'));
-        const driverResponse = await fetch(CORS_PROXY + apiUrl);
+        const apiUrl = buildDriversApiUrl({ ...route, cpu });
+        const driverResponse = await fetch(CORS_PROXY + encodeURIComponent(apiUrl));
         if (!driverResponse.ok) throw new Error(t('error-fetch-api', { status: driverResponse.status }));
 
         // API 回傳 JSON 字串，需手動解析
@@ -119,54 +124,85 @@ async function handleFetchAndAnalyze(modelSlug) {
 }
 
 /**
- * 解析 HTML 內容以提取建構 API 網址所需的參數。
- * @param {string} htmlContent - 產品頁面的 HTML 原始碼。
+ * 透過 ASUS Route API 取得產品的核心識別參數。
+ * 回傳結構化 JSON，不必再從 HTML 刮取不穩定的值。
  * @param {string} modelSlug - 裝置的型號 slug。
- * @returns {string|null} 組合好的 API 網址，若失敗則返回 null。
+ * @returns {Promise<{m1id:string, levelTagId:string, model:string}|null>}
  */
-function parseHtmlForApiUrl(htmlContent, modelSlug) {
-    // 內部輔助函數，用於執行正則表達式並提取匹配項
-    const extractData = (regex, name) => {
-        const match = htmlContent.match(regex);
-        if (match && match[1]) return match[1].trim();
-        console.error(`無法提取: ${name}`);
-        return null;
-    };
+async function fetchProductRoute(modelSlug) {
+    // model 與 m1Id 等識別資訊在所有語言下皆相同，固定用 us 路徑查詢最穩定。
+    const webUrl = `us/gaming-handhelds/rog-ally/${modelSlug}/helpdesk_download/`;
+    const routeUrl = `https://api-rog.asus.com/recent-data/api/v3/Route`
+        + `?WebURL=${encodeURIComponent(webUrl)}&systemCode=${SYSTEM_CODE}`;
 
-    let errors = [];
-    const params = {
-        model: modelSlug,
-        website: getLang()
-    };
+    const response = await fetch(CORS_PROXY + encodeURIComponent(routeUrl));
+    if (!response.ok) throw new Error(t('error-fetch-page', { status: response.status }));
 
-    // 提取 m1id (產品 ID)，提供備用正則
-    params.m1id = extractData(/data-bv-product-id="ROG_M1_(\d+)_P"/, 'm1id') || extractData(/"m1Id":(\d+),/, 'm1id (fallback)');
-    if (!params.m1id) errors.push('m1id');
+    const json = await response.json();
+    const result = (typeof json === 'string' ? JSON.parse(json) : json).result;
 
-    // 提取 systemCode (e.g., 'rog')
-    params.systemCode = extractData(/system:\s*['"]([^'"]+)['"]/, 'systemCode');
-    if (!params.systemCode) errors.push('systemCode');
-
+    // 校驗組合 API 網址所需的必要參數
+    const errors = [];
+    if (!result || !result.m1Id) errors.push('m1id');
+    if (!result || !result.levelTagId) errors.push('LevelTagId');
+    if (!result || !result.webPathName) errors.push('model');
     if (errors.length > 0) {
         showState('error', t('error-api-params', { params: errors.join(', ') }));
         return null;
     }
 
-    // 根據測試，cpu 和 LevelTagId 參數可以為空，這讓指令碼更具備彈性以應對網站未來變動。
+    return {
+        m1id: String(result.m1Id),
+        levelTagId: String(result.levelTagId),
+        // webPathName 帶有正確大小寫 (新機型為 'ROG-XBOX-Ally-2025')，直接沿用最可靠。
+        model: result.webPathName,
+    };
+}
+
+/**
+ * 查詢機型對應的 CPU 名稱。舊機型 (如 RC72LA) 有值，新機型回空字串。
+ * 此參數對 GetPDDrivers 而言可有可無，失敗時退回空字串不中斷流程。
+ * @param {string} model - 正確大小寫的 model 名稱。
+ * @param {string} m1id - 產品 ID。
+ * @returns {Promise<string>} CPU 名稱，無則回空字串。
+ */
+async function fetchCpuName(model, m1id) {
+    try {
+        const cpuUrl = `https://rog.asus.com/support/webapi/product/GetPDCPUName`
+            + `?website=us&model=${encodeURIComponent(model)}&pdid=0&m1id=${m1id}&systemCode=${SYSTEM_CODE}`;
+        const response = await fetch(CORS_PROXY + encodeURIComponent(cpuUrl));
+        if (!response.ok) return '';
+
+        const json = await response.json();
+        const data = typeof json === 'string' ? JSON.parse(json) : json;
+        const result = data.Result ?? data.result ?? data;
+        // 回傳形如 { Name: "RC72LA" }，或陣列；容錯取出第一個名稱。
+        if (Array.isArray(result)) return result[0]?.Name ?? '';
+        return result?.Name ?? '';
+    } catch (_) {
+        return ''; // CPU 名稱非必要，查不到就留空
+    }
+}
+
+/**
+ * 用取得的參數組合 GetPDDrivers API 網址。
+ * @param {{website?:string, model:string, m1id:string, levelTagId:string, cpu:string}} params
+ * @returns {string} 組合好的 API 網址。
+ */
+function buildDriversApiUrl(params) {
     const baseUrl = "https://rog.asus.com/support/webapi/ProductV2/GetPDDrivers";
     const queryParams = new URLSearchParams({
-        website: params.website,
+        website: getLang(), // 驅動清單的語言跟隨目前選擇的介面語言
         model: params.model,
         pdid: '0',
         m1id: params.m1id,
         mode: '',
-        cpu: '', // 留空
+        cpu: params.cpu || '',
         osid: '52', // Windows 11
         active: '',
-        LevelTagId: '', // 留空
-        systemCode: params.systemCode,
+        LevelTagId: params.levelTagId,
+        systemCode: SYSTEM_CODE,
     });
-
     return `${baseUrl}?${queryParams.toString()}`;
 }
 
